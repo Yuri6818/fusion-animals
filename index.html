@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Minimal Crystal Recolor System</title>
+
+  <style>
+
+    * {
+
+      box-sizing: border-box;
+
+      margin: 0;
+
+      padding: 0;
+
+    }
+
+
+
+    body {
+
+      font-family: 'Arial', sans-serif;
+
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+      min-height: 100vh;
+
+      display: flex;
+
+      flex-direction: column;
+
+      align-items: center;
+
+      padding: 80px 20px 20px;
+
+      color: white;
+
+    }
+
+
+
+    .container {
+
+      background: rgba(255, 255, 255, 0.1);
+
+      backdrop-filter: blur(10px);
+
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      border-radius: 20px;
+
+      padding: 40px 40px 20px;
+
+      text-align: center;
+
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+
+      max-width: 800px;
+
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+
+    }
+
+
+
+    h1 {
+
+      font-size: 2.8em;
+
+      margin-bottom: 10px;
+
+      background: linear-gradient(45deg, #ffd700, #ff8c00, #ffd700);
+
+      background-size: 200% auto;
+
+      -webkit-background-clip: text;
+
+      -webkit-text-fill-color: transparent;
+
+      background-clip: text;
+
+      animation: textShine 2s linear infinite;
+
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+      font-weight: 900;
+
+      letter-spacing: -1px;
+
+    }
+
+
+
+    @keyframes textShine {
+
+      to {
+
+        background-position: 200% center;
+
+      }
+
+    }
+
+
+
+    .subtitle {
+
+      font-size: 1.2em;
+
+      margin-bottom: 40px;
+
+      opacity: 0.9;
+
+    }
+
+
+
+    .fusion-area {
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 30px;
+
+      margin: 40px 0;
+
+      min-height: 200px;
+
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+
+    }
+
+
+
+    .fusion-area.fusing {
+
+      flex-direction: row;
+
+      align-items: center;
+
+      justify-content: center;
+
+      gap: 20px;
+
+      margin: 0;
+
+    }
+
+    .fusion-area.fusing .item-card,
+    .fusion-area.fusing .plus-symbol {
+      display: none;
+    }
+
+
+
+    .item-card {
+
+      background: rgba(255, 255, 255, 0.15);
+
+      border: 2px solid rgba(255, 255, 255, 0.3);
+
+      border-radius: 15px;
+
+      padding: 20px;
+
+      transition: all 0.6s ease;
+
+      position: relative;
+
+      backdrop-filter: blur(5px);
+
+    }
+
+
+
+    .item-card.fade-out {
+
+      opacity: 0;
+
+      transform: scale(0.3) rotate(180deg);
+
+    }
+
+
+
+    .item-card h3 {
+
+      font-size: 1.1em;
+
+      margin-bottom: 15px;
+
+      color: #ffd700;
+
+    }
+
+
+
+    .item-image {
+
+      width: 120px;
+
+      height: 120px;
+
+      border-radius: 10px;
+
+      border: 3px solid rgba(255, 255, 255, 0.4);
+
+      transition: all 0.4s ease;
+
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+
+    }
+
+
+
+    .item-image:hover {
+
+      transform: scale(1.05);
+
+      box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3);
+
+    }
+
+
+
+    .plus-symbol {
+
+      font-size: 3em;
+
+      color: #ffd700;
+
+      font-weight: bold;
+
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+      transition: all 0.6s ease;
+
+    }
+
+
+
+    .plus-symbol.fade-out {
+
+      opacity: 0;
+
+      transform: rotate(360deg) scale(0);
+
+    }
+
+
+
+    .result-card {
+
+      background: rgba(255, 255, 255, 0.2);
+
+      border: 3px solid #ffd700;
+
+      border-radius: 15px;
+
+      padding: 25px;
+
+      backdrop-filter: blur(10px);
+
+      position: relative;
+
+      overflow: hidden;
+
+    }
+
+
+
+    .result-card::before {
+
+      content: '';
+
+      position: absolute;
+
+      top: -2px;
+
+      left: -2px;
+
+      right: -2px;
+
+      bottom: -2px;
+
+      background: linear-gradient(45deg, #ffd700, #ffaa00, #ffd700);
+
+      border-radius: 15px;
+
+      z-index: -1;
+
+      animation: borderGlow 2s ease-in-out infinite alternate;
+
+    }
+
+
+
+    @keyframes borderGlow {
+
+      0% { opacity: 0.5; }
+
+      100% { opacity: 1; }
+
+    }
+
+
+
+    .result-name {
+
+      font-size: 1.8em;
+
+      font-weight: bold;
+
+      color: #ffd700;
+
+      margin-bottom: 15px;
+
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+
+      opacity: 0;
+
+      transform: translateY(-20px);
+
+      transition: all 0.6s ease 0.3s;
+
+    }
+
+
+
+    .result-name.show {
+
+      opacity: 1;
+
+      transform: translateY(0);
+
+    }
+
+
+
+    .result-image {
+
+      width: 140px;
+
+      height: 140px;
+
+      border-radius: 10px;
+
+      border: 3px solid rgba(255, 255, 255, 0.6);
+
+      opacity: 0;
+
+      transform: scale(0.5);
+
+      transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    }
+
+
+
+    .result-image.show {
+
+      opacity: 1;
+
+      transform: scale(1);
+
+    }
+
+
+
+    .fuse-button {
+
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+
+      border: none;
+
+      border-radius: 50px;
+
+      color: white;
+
+      font-size: 1.3em;
+
+      font-weight: bold;
+
+      padding: 15px 40px;
+
+      cursor: pointer;
+
+      transition: all 0.3s ease;
+
+      box-shadow: 0 4px 15px rgba(238, 90, 36, 0.4);
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+    }
+
+
+
+    .fuse-button:hover {
+
+      transform: translateY(-2px);
+
+      box-shadow: 0 6px 20px rgba(238, 90, 36, 0.6);
+
+    }
+
+
+
+    .fuse-button:active {
+
+      transform: translateY(0);
+
+    }
+
+
+
+    .fuse-button.hidden {
+
+      opacity: 0;
+
+      pointer-events: none;
+
+    }
+
+
+
+    .magic-particles {
+
+      position: absolute;
+
+      width: 100%;
+
+      height: 100%;
+
+      pointer-events: none;
+
+      overflow: hidden;
+
+      border-radius: 15px;
+
+    }
+
+
+
+    .particle {
+
+      position: absolute;
+
+      width: 6px;
+
+      height: 6px;
+
+      background: radial-gradient(circle, #ffd700, transparent);
+
+      border-radius: 50%;
+
+      animation: float 2s ease-in-out infinite;
+
+    }
+
+
+
+    @keyframes float {
+
+      0%, 100% {
+
+        transform: translateY(0) rotate(0deg);
+
+        opacity: 0;
+
+      }
+
+      50% {
+
+        transform: translateY(-30px) rotate(180deg);
+
+        opacity: 1;
+
+      }
+
+    }
+
+
+
+    .explosion {
+
+      position: absolute;
+
+      top: 50%;
+
+      left: 50%;
+
+      width: 100px;
+
+      height: 100px;
+
+      transform: translate(-50%, -50%);
+
+      pointer-events: none;
+
+    }
+
+
+
+    .explosion-particle {
+
+      position: absolute;
+
+      width: 8px;
+
+      height: 8px;
+
+      background: radial-gradient(circle, #ffd700, #ffaa00);
+
+      border-radius: 50%;
+
+      animation: explode 1s ease-out forwards;
+
+    }
+
+
+
+    @keyframes explode {
+
+      0% {
+
+        transform: scale(0);
+
+        opacity: 1;
+
+      }
+
+      100% {
+
+        transform: scale(1) translate(var(--dx), var(--dy));
+
+        opacity: 0;
+
+      }
+
+    }
+
+
+
+    .reset-button {
+
+      background: rgba(255, 255, 255, 0.2);
+
+      border: 2px solid rgba(255, 255, 255, 0.5);
+
+      border-radius: 25px;
+
+      color: white;
+
+      font-size: 1em;
+
+      padding: 10px 25px;
+
+      cursor: pointer;
+
+      transition: all 0.3s ease;
+
+      
+
+    }
+
+
+
+    .reset-button:hover {
+
+      background: rgba(255, 255, 255, 0.3);
+
+      transform: translateY(-1px);
+
+    }
+
+
+
+    @media (max-width: 768px) {
+
+      .fusion-area {
+
+        flex-direction: column;
+
+        gap: 20px;
+
+      }
+
+      
+
+      .plus-symbol {
+
+        transform: rotate(90deg);
+
+      }
+
+      
+
+      h1 {
+
+        font-size: 2em;
+
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Crystal Fusion System</h1>
+
+    <p class="subtitle">Transform your Minimal with magical crystals</p>
+
+    
+
+    <div class="fusion-area" id="fusionArea">
+
+      <div class="item-card" id="minimalCard">
+
+        <h3>Base Minimal</h3>
+
+        <img src="https://cdn.discordapp.com/attachments/1412234467048947825/1415348912654389320/Tangerush_Wycicle_PNG.png?ex=68c2e1e4&is=68c19064&hm=5e4b6cefd93bbee9c6c47e0d14e034ec24df57c7d41543a7ad7990241fb87ef5" alt="Tangerush Minimal" class="item-image" id="minimalImage">
+
+      </div>
+
+      
+
+      <div class="plus-symbol" id="plusSymbol">+</div>
+
+      
+
+      <div class="item-card" id="crystalCard">
+
+        <h3>Orange Crystal</h3>
+
+        <img src="https://cdn.discordapp.com/attachments/1412234467048947825/1415348913325736098/Shard7Orange.png?ex=68c2e1e4&is=68c19064&hm=60676cc08289ad23682433067570b236cff0b4f0b580227c1a739ccab35ed883" alt="Orange Crystal" class="item-image" id="crystalImage">
+
+      </div>
+
+      
+
+      <div class="result-card" id="resultCard" style="display: none;">
+
+        <div class="magic-particles" id="particles"></div>
+
+        <div class="result-name" id="resultName">Wycicle</div>
+
+        <img src="https://cdn.discordapp.com/attachments/1412234467048947825/1415348913006842046/Wycicle.png?ex=68c2e1e4&is=68c19064&hm=96327be1efa82ed6af593d5bce8e50cbc6a4dbc8ef0841aa67a107c43d6893f8" alt="Wycicle Result" class="result-image" id="resultImage">
+
+      </div>
+
+    </div>
+
+    
+
+    <button class="fuse-button" id="fuseButton" onclick="startFusion()">
+
+      🔮 Activate Fusion 🔮
+
+    </button>
+
+    
+
+    <button class="reset-button" id="resetButton" onclick="resetDemo()" style="display: none;">
+
+      ↻ Try Again
+
+    </button>
+
+  </div>
+
+
+
+  <script>
+
+    let isAnimating = false;
+
+
+
+    function createExplosion(element) {
+
+      const explosion = document.createElement('div');
+
+      explosion.className = 'explosion';
+
+      element.appendChild(explosion);
+
+      
+
+      // Create explosion particles
+
+      for (let i = 0; i < 12; i++) {
+
+        const particle = document.createElement('div');
+
+        particle.className = 'explosion-particle';
+
+        
+
+        // Random direction
+
+        const angle = (i / 12) * Math.PI * 2;
+
+        const distance = 50 + Math.random() * 30;
+
+        const dx = Math.cos(angle) * distance;
+
+        const dy = Math.sin(angle) * distance;
+
+        
+
+        particle.style.setProperty('--dx', dx + 'px');
+
+        particle.style.setProperty('--dy', dy + 'px');
+
+        
+
+        explosion.appendChild(particle);
+
+      }
+
+      
+
+      // Clean up
+
+      setTimeout(() => {
+
+        explosion.remove();
+
+      }, 1000);
+
+    }
+
+
+
+    function createFloatingParticles() {
+
+      const particles = document.getElementById('particles');
+
+      
+
+      for (let i = 0; i < 6; i++) {
+
+        setTimeout(() => {
+
+          const particle = document.createElement('div');
+
+          particle.className = 'particle';
+
+          particle.style.left = Math.random() * 100 + '%';
+
+          particle.style.animationDelay = Math.random() * 2 + 's';
+
+          particles.appendChild(particle);
+
+          
+
+          setTimeout(() => {
+
+            particle.remove();
+
+          }, 2000);
+
+        }, i * 200);
+
+      }
+
+    }
+
+
+
+    function startFusion() {
+
+      if (isAnimating) return;
+
+      isAnimating = true;
+
+
+
+      const fusionArea = document.getElementById('fusionArea');
+
+      const minimalCard = document.getElementById('minimalCard');
+
+      const crystalCard = document.getElementById('crystalCard');
+
+      const plusSymbol = document.getElementById('plusSymbol');
+
+      const resultCard = document.getElementById('resultCard');
+
+      const resultName = document.getElementById('resultName');
+
+      const resultImage = document.getElementById('resultImage');
+
+      const fuseButton = document.getElementById('fuseButton');
+
+      const resetButton = document.getElementById('resetButton');
+
+
+
+      // Hide button
+
+      fuseButton.classList.add('hidden');
+
+
+
+      // Create explosion effect
+
+      createExplosion(fusionArea);
+
+
+
+      // Start fade out animation
+
+      setTimeout(() => {
+
+        minimalCard.classList.add('fade-out');
+
+        crystalCard.classList.add('fade-out');
+
+        plusSymbol.classList.add('fade-out');
+
+      }, 300);
+
+
+
+      // Show result and center
+
+      setTimeout(() => {
+
+        fusionArea.classList.add('fusing');
+
+        resultCard.style.display = 'block';
+
+        
+
+        setTimeout(() => {
+
+          resultImage.classList.add('show');
+
+          createFloatingParticles();
+
+        }, 200);
+
+        
+
+        setTimeout(() => {
+
+          resultName.classList.add('show');
+
+        }, 600);
+
+        
+
+        setTimeout(() => {
+
+          resetButton.style.display = 'inline-block';
+
+          isAnimating = false;
+
+        }, 1000);
+
+        
+
+      }, 800);
+
+    }
+
+
+
+    function resetDemo() {
+
+      if (isAnimating) return;
+
+
+
+      const fusionArea = document.getElementById('fusionArea');
+
+      const minimalCard = document.getElementById('minimalCard');
+
+      const crystalCard = document.getElementById('crystalCard');
+
+      const plusSymbol = document.getElementById('plusSymbol');
+
+      const resultCard = document.getElementById('resultCard');
+
+      const resultName = document.getElementById('resultName');
+
+      const resultImage = document.getElementById('resultImage');
+
+      const fuseButton = document.getElementById('fuseButton');
+
+      const resetButton = document.getElementById('resetButton');
+
+
+
+      // Reset all states
+
+      fusionArea.classList.remove('fusing');
+
+      minimalCard.classList.remove('fade-out');
+
+      crystalCard.classList.remove('fade-out');
+
+      plusSymbol.classList.remove('fade-out');
+
+      resultName.classList.remove('show');
+
+      resultImage.classList.remove('show');
+
+      fuseButton.classList.remove('hidden');
+
+      
+
+      // Show original items again
+
+      minimalCard.style.display = 'block';
+
+      crystalCard.style.display = 'block';
+
+      plusSymbol.style.display = 'block';
+
+      
+
+      resultCard.style.display = 'none';
+
+      resetButton.style.display = 'none';
+
+    }
+
+
+
+    // Add some initial floating particles for ambiance
+
+    setInterval(() => {
+
+      if (!isAnimating && document.getElementById('resultCard').style.display === 'block') {
+
+        createFloatingParticles();
+
+      }
+
+    }, 3000);
+
+  </script>
+
+</body>
+
+</html>
